@@ -4,7 +4,7 @@ permissions:
   contents: write
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   push:
     tags:
       - 'v*'
@@ -16,20 +16,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          
       - uses: pnpm/action-setup@v4
+        with:
+          version: 8.x # Specify the pnpm version
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           registry-url: https://registry.npmjs.org/
-      - run: npm i -g @antfu/ni
+
+      - run: pnpm add -g @antfu/ni
+      
       - run: pnpm install
-      - run: npx changelogithub
+
+      - run: pnpm exec changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          
       - run: pnpm run build
-      - run: cd dist && npx vsce publish -p ${{secrets.VSCE_PAT}} --no-dependencies
+      
+      - run: cd dist && pnpm exec vsce publish -p ${{secrets.VSCE_PAT}} --no-dependencies
         env:
           VSCE_TOKEN: ${{secrets.VSCE_PAT}}
-      # - run: cd dist && npx ovsx publish -p ${{secrets.OVSX_TOKEN}} --no-dependencies
+      
+      # Uncomment this block if publishing to OpenVSX:
+      # - run: cd dist && pnpm exec ovsx publish -p ${{secrets.OVSX_TOKEN}} --no-dependencies
       #   env:
       #     OVSX_TOKEN: ${{secrets.OVSX_TOKEN}}
