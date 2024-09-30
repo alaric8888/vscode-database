@@ -43,14 +43,14 @@ jobs:
       - name: Check output
         run: |
             ls dist  # 确保构建文件存在
-      # Step 7: 使用 vsce 发布到 Visual Studio Code Marketplace
-      - name: Publish to Visual Studio Code Marketplace
+      - name: build vsce
         run: |
           pnpm exec vsce package  # 打包扩展为 .vsix 文件
-          pnpm exec vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies  # 发布到 Marketplace
+        # Step 7: 使用 vsce 发布到 Visual Studio Code Marketplace    
+      - name: "Publish to Visual Studio Code Marketplace"
+        run: pnpm exec vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies  # 发布到 Marketplace
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_PAT }}
-
       # Step 8: （可选）发布到 OpenVSX
     #   - name: Publish to OpenVSX (optional)
     #     if: ${{ secrets.OVSX_TOKEN != '' }}  # 如果存在 OVSX_TOKEN 则发布
