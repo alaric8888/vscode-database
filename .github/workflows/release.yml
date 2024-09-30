@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install
-          pnpm add -g vsce  # 安装 vsce 发布工具
+          pnpm add -g @vscode/vsce  # 安装 vsce 发布工具
 
       # Step 5: 构建 VSCode 扩展
       - name: Build extension
