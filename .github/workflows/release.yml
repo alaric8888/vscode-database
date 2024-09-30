@@ -1,6 +1,10 @@
 name: Release
 
+permissions:
+  contents: write
+
 on:
+  workflow_dispatch: 
   push:
     tags:
       - 'v*'
@@ -9,20 +13,23 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: lts/*
           registry-url: https://registry.npmjs.org/
-      - run: npx conventional-github-releaser -p angular
+      - run: npm i -g @antfu/ni
+      - run: pnpm install
+      - run: npx changelogithub
         env:
-          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - run: yarn run build
-      - run: cd build/icons-carbon && npx vsce publish -p ${{secrets.VSCE_PAT}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: pnpm run build
+      - run: cd dist && npx vsce publish -p ${{secrets.VSCE_PAT}} --no-dependencies
         env:
           VSCE_TOKEN: ${{secrets.VSCE_PAT}}
-      # - run: cd build/icons-carbon && npx ovsx publish -p ${{secrets.OVSX_TOKEN}}
+      # - run: cd dist && npx ovsx publish -p ${{secrets.OVSX_TOKEN}} --no-dependencies
       #   env:
       #     OVSX_TOKEN: ${{secrets.OVSX_TOKEN}}
