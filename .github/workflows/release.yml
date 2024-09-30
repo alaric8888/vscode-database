@@ -4,6 +4,7 @@ name: Release VSCode Extension
 on:
   workflow_dispatch:
   push:
+    branches: ['main']
     tags:
       - 'v*'  # 触发条件为推送 v* 的标签
 
